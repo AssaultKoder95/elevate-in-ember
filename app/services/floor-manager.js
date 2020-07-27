@@ -49,7 +49,8 @@ export default class FloorManagerService extends Service {
     const length = this.floorSetup.length;
     const currentFloor = this.floorSetup.filter(
       floor => floor.number === floorNumber
-    )[0];
+	)[0];
+
     const { hasLiftA, hasLiftB, hasLiftC } = currentFloor;
 
     let nextFloor;
@@ -72,7 +73,11 @@ export default class FloorManagerService extends Service {
       nextFloor = this.floorSetup.filter(
         (floor) => floor.number === floorNumber - 1
       )[0];
-    }
+	}
+	
+	if (!hasLiftA && !hasLiftB && !hasLiftC) {
+		return;
+	}
 
     const nextFloorNewState = { ...nextFloor, hasLiftA, hasLiftB, hasLiftC };
     const currentFloorNewState = {
@@ -85,9 +90,11 @@ export default class FloorManagerService extends Service {
     const newFloorState =
       movementType === "up"
         ? [nextFloorNewState, currentFloorNewState]
-        : [currentFloorNewState, nextFloorNewState];
+		: [currentFloorNewState, nextFloorNewState];
+
     let floorSetup = this.floorSetup;
-    floorSetup.splice(length - floorNumber - 1, 2, ...newFloorState);
+	floorSetup.splice(length - floorNumber - 1, 2, ...newFloorState);
+	console.log(floorSetup);
     this.floorSetup = floorSetup;
   }
 }
